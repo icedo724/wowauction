@@ -27,6 +27,6 @@ jobs:
         run: |
           git config --global user.name "Market-Bot"
           git config --global user.email "bot@github.com"
-          git add data/market_history.csv data/item_dict.csv
-          git commit -m "Update market data" || exit 0
+          git add data/market_history.csv data/market_volume.csv data/item_dict.csv
+          git commit -m "Update market price and volume" || exit 0
           git push
