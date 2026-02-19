@@ -1,1 +1,9 @@
-https://wowauction.streamlit.app/
+
+# 월드 오브 워크래프트 실시간 시세 대시보드
+- 블리자드 API와 GitHub Actions를 활용해 한국 서버 경매장 시세를 1시간마다 자동 수집합니다.
+
+- 와우 토큰 기반의 실시간 골드 가치 환산 및 주요 제작 재료의 시세 변동을 추적합니다.
+
+- Streamlit을 통해 가시성 높은 데이터 차트와 실시간 급등 품목 분석 기능을 제공합니다.
+
+대시보드 링크: https://wowauction.streamlit.app/
