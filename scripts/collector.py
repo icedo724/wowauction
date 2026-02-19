@@ -13,12 +13,23 @@ STABLE_TARGETS = {
 
 
 def get_token():
-    cid_path = os.path.join(BASE_DIR, 'config', 'clientid.txt')
-    sec_path = os.path.join(BASE_DIR, 'config', 'secret.txt')
-    with open(cid_path, 'r') as f: client_id = f.read().strip()
-    with open(sec_path, 'r') as f: client_secret = f.read().strip()
+    client_id = os.getenv('WOW_CLIENT_ID')
+    client_secret = os.getenv('WOW_CLIENT_SECRET')
+
+    if not client_id or not client_secret:
+        try:
+            cid_path = os.path.join(BASE_DIR, 'config', 'clientid.txt')
+            sec_path = os.path.join(BASE_DIR, 'config', 'secret.txt')
+            with open(cid_path, 'r') as f:
+                client_id = f.read().strip()
+            with open(sec_path, 'r') as f:
+                client_secret = f.read().strip()
+        except FileNotFoundError:
+            raise Exception("❌ 인증 정보를 찾을 수 없습니다. 환경변수나 config 파일을 확인하세요.")
+
     r = requests.post("https://oauth.battle.net/token",
-                      data={'grant_type': 'client_credentials'}, auth=(client_id, client_secret))
+                      data={'grant_type': 'client_credentials'},
+                      auth=(client_id, client_secret))
     return r.json().get('access_token')
 
 
