@@ -1,7 +1,9 @@
 import requests
 import pandas as pd
 import os
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+KST = timezone(timedelta(hours=9))
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -60,7 +62,8 @@ def get_item_name(item_id, token):
 
 def collect_master():
     token = get_token()
-    now_col = datetime.now().strftime('%Y-%m-%d %H') + ":00"
+    now_kst = datetime.now(KST)
+    now_col = now_kst.strftime('%Y-%m-%d %H') + ":00"
 
     url = "https://kr.api.blizzard.com/data/wow/auctions/commodities"
     headers = {"Authorization": f"Bearer {token}", "Battlenet-Namespace": "dynamic-kr"}
@@ -71,10 +74,10 @@ def collect_master():
         df_raw = pd.DataFrame(raw_data)
         df_raw['item_id'] = df_raw['item'].apply(lambda x: x['id'])
 
+        snapshot_time = now_kst.strftime('%Y%m%d_%H')
         raw_dir = os.path.join(BASE_DIR, 'data', 'raw')
         os.makedirs(raw_dir, exist_ok=True)
-        df_raw.to_csv(os.path.join(raw_dir, f"snapshot_{datetime.now().strftime('%Y%m%d_%H')}.csv"), index=False,
-                      encoding='utf-8-sig')
+        df_raw.to_csv(os.path.join(raw_dir, f"snapshot_{snapshot_time}.csv"), index=False, encoding='utf-8-sig')
 
         top_20_ids = df_raw.groupby('item_id')['quantity'].sum().nlargest(20).index.tolist()
         dict_path = os.path.join(BASE_DIR, 'data', 'item_dict.csv')
